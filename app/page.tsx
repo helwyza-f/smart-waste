@@ -23,8 +23,8 @@ const HomePage = () => {
         <div className="fixed bottom-4 left-4 right-4 bg-blue-500 text-white p-3 rounded-lg shadow-lg text-center">
           <p>
             Install aplikasi ini: Tekan{" "}
-            <span className="font-bold">"Share"</span> lalu pilih{" "}
-            <span className="font-bold">"Add to Home Screen"</span>.
+            <span className="font-bold">&quot;Share&quot;</span> lalu pilih{" "}
+            <span className="font-bold">&quot;Add to Home Screen&quot;</span>.
           </p>
         </div>
       )}
