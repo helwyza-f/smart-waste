@@ -1,0 +1,17 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model TrashReport {
+  id        String   @id @default(uuid())
+  imageUrl  String
+  location  String
+  status    String   @default("pending") // pending, approved, cleaned
+  createdAt DateTime @default(now())
+}
