@@ -1,6 +1,6 @@
 {
-  "name": "My awesome PWA app",
-  "short_name": "PWA App",
+  "name": "Smart Waste Management System",
+  "short_name": "Smart Waste",
   "icons": [
     {
       "src": "/icons/android-chrome-192x192.png",
