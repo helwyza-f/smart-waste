@@ -15,10 +15,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const APP_NAME = "PWA App";
-const APP_DEFAULT_TITLE = "My Awesome PWA App";
+const APP_NAME = "Smart Waste";
+const APP_DEFAULT_TITLE = "Smart Waste Management System ";
 const APP_TITLE_TEMPLATE = "%s - PWA App";
-const APP_DESCRIPTION = "Best PWA app in the world!";
+const APP_DESCRIPTION =
+  "Smart Waste Management System for Waste Collection and Recycling";
 
 export const metadata: Metadata = {
   applicationName: APP_NAME,
