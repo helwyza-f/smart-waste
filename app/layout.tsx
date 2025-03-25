@@ -4,6 +4,8 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import type { Metadata, Viewport } from "next";
 import { Toaster } from "@/components/ui/sonner";
+import { SidebarWrapper } from "@/components/ui/sidebar-wrapper";
+import { getUserSession } from "@/utils/actions";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -61,24 +63,21 @@ export const viewport: Viewport = {
   themeColor: "#FFFFFF",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const user = await getUserSession();
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SidebarProvider>
-          <AppSidebar />
-          <main className="flex-1">
-            <SidebarTrigger size={"lg"} className="h-10 w-10" />
-            {children}
-          </main>
+        <SidebarWrapper user={user}>
+          {children}
           <Toaster richColors />
-        </SidebarProvider>
+        </SidebarWrapper>
       </body>
     </html>
   );

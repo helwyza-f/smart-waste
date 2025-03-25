@@ -1,66 +1,35 @@
-import {
-  Calendar,
-  Home,
-  Inbox,
-  Search,
-  Settings,
-  MapPin,
-  Trash2,
-  Coins,
-  Trophy,
-} from "lucide-react";
+"use client";
 
+import { useState, useEffect } from "react";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { NavUser } from "./nav-user";
-import { getUserSession } from "@/utils/actions";
 import Link from "next/link";
 import { Button } from "./ui/button";
+import { SidebarMenuItemComponent } from "./sidebar-menu-item";
 
-// Menu items.
 const items = [
-  {
-    title: "Home",
-    url: "/",
-    icon: Home,
-  },
-  {
-    title: "Laporkan Sampah",
-    url: "/laporkan-sampah",
-    icon: MapPin,
-  },
-  {
-    title: "Kumpulkan Sampah",
-    url: "/kumpulkan-sampah",
-    icon: Trash2,
-  },
-  {
-    title: "Penghargaan",
-    url: "/penghargaan",
-    icon: Coins,
-  },
-  {
-    title: "Peringkat",
-    url: "/peringkat",
-    icon: Trophy,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
-  },
+  { title: "Home", url: "/", iconName: "House" },
+  { title: "Maps", url: "/maps", iconName: "Map" },
+  { title: "Laporkan Sampah", url: "/laporkan-sampah", iconName: "MapPin" },
+  { title: "Kumpulkan Sampah", url: "/kumpulkan-sampah", iconName: "Trash2" },
+  { title: "Penghargaan", url: "/penghargaan", iconName: "Coins" },
+  { title: "Peringkat", url: "/peringkat", iconName: "Trophy" },
+  { title: "Settings", url: "/settings", iconName: "Settings" },
 ];
 
-export async function AppSidebar() {
-  const user = await getUserSession();
-
+export function AppSidebar({
+  user,
+  onClose,
+}: {
+  user: any;
+  onClose?: () => void;
+}) {
   return (
     <Sidebar className="z-50">
       <SidebarHeader>
@@ -69,14 +38,11 @@ export async function AppSidebar() {
       <SidebarContent>
         <SidebarMenu>
           {items.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild size={"lg"}>
-                <Link href={item.url}>
-                  <item.icon size={"1.5rem"} />
-                  <span>{item.title}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
+            <SidebarMenuItemComponent
+              key={item.title}
+              {...item}
+              onClick={onClose}
+            />
           ))}
         </SidebarMenu>
       </SidebarContent>
@@ -92,7 +58,7 @@ export async function AppSidebar() {
             }}
           />
         ) : (
-          <Link href="/login">
+          <Link href="/login" onClick={onClose}>
             <Button variant="outline" className="w-full bg-blue-500 text-white">
               Login
             </Button>
