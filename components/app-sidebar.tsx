@@ -62,7 +62,7 @@ export async function AppSidebar() {
   const user = await getUserSession();
 
   return (
-    <Sidebar className="p-3 z-50">
+    <Sidebar className="z-50">
       <SidebarHeader>
         <h1 className="text-2xl font-bold">Smart Waste</h1>
       </SidebarHeader>
@@ -70,11 +70,11 @@ export async function AppSidebar() {
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild>
-                <a href={item.url}>
-                  <item.icon />
+              <SidebarMenuButton asChild size={"lg"}>
+                <Link href={item.url}>
+                  <item.icon size={"1.5rem"} />
                   <span>{item.title}</span>
-                </a>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}

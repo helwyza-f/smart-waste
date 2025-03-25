@@ -2,24 +2,25 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/utils/supabase/client";
 
 import { Camera, UploadCloud, CheckCircle, Loader2 } from "lucide-react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-import { User } from "@supabase/supabase-js";
 import { useUser } from "@/context/userContext";
 import Image from "next/image";
+import { User } from "@supabase/supabase-js";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-const DynamicMap = dynamic(() => import("../../components/DynamicMap"), {
+const DynamicMap = dynamic(() => import("../../../components/DynamicMap"), {
   ssr: false,
 });
 
 const supabase = createClient();
 export default function LaporkanSampah() {
-  const user = useUser();
-
+  const user: User = useUser();
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(
@@ -29,6 +30,8 @@ export default function LaporkanSampah() {
   const [wasteType, setWasteType] = useState<string | null>(null);
   const [amount, setAmount] = useState<string | null>(null);
   const [confidence, setConfidence] = useState<number | null>(null);
+  const queryClient = useQueryClient();
+  const router = useRouter();
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
@@ -78,16 +81,17 @@ export default function LaporkanSampah() {
       const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API!);
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-      const prompt = `Analyze this image and provide:
-      1. Type of waste (e.g., plastic, paper, glass, metal, organic)
-      2. Estimated quantity (in kg or liters)
-      3. Confidence level (as a percentage)
-      Respond in JSON format like this:
-      {
-        "wasteType": "type",
-        "quantity": "amount",
-        "confidence": confidence_level (0-1)
-      }`;
+      const prompt = `Analisis gambar ini dan berikan:  
+          1. Jenis sampah (misalnya, plastik, kertas, kaca, logam, organik)  
+          2. Perkiraan jumlah (dalam kg atau liter)  
+          3. Tingkat kepercayaan (dalam persen)  
+
+          Berikan respons dalam format JSON seperti ini dan hanya JSON nya saja tanpa ada tambahan teks apa pun:  
+          {
+            "wasteType": "jenis",
+            "quantity": "jumlah",
+            "confidence": tingkat_kepercayaan (0-1)
+          }`;
 
       const result = await model.generateContent([
         prompt,
@@ -95,6 +99,7 @@ export default function LaporkanSampah() {
       ]);
       const text = result.response.text();
       const cleanedText = text.replace(/```json|```/g, "").trim();
+      console.log(cleanedText);
       return JSON.parse(cleanedText);
     },
     onSuccess: (data) => {
@@ -134,15 +139,26 @@ export default function LaporkanSampah() {
       ]);
 
       if (dbError) throw dbError;
-
-      alert("Laporan berhasil disimpan!");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["reports"] });
+      toast.success("Laporan berhasil dikirim!");
+      setImage(null);
+      setPreview(null);
+      setWasteType(null);
+      setAmount(null);
+      setConfidence(null);
+      setUseMap(false);
+    },
+    onError: (error: Error) => {
+      toast.error("Laporan gagal dikirim: " + error.message);
     },
   });
 
   return (
-    <div className="flex flex-col gap-4 p-4">
-      <h1 className="text-xl font-bold">Laporkan Lokasi Sampah</h1>
-      <label className="cursor-pointer flex flex-col items-center justify-center w-32 h-32 bg-gray-100 rounded-lg shadow-md border border-dashed border-gray-400 hover:bg-gray-200">
+    <div className="flex flex-col gap-4 p-4 items-center ">
+      <h1 className="text-2xl font-bold">Laporkan Lokasi Sampah</h1>
+      <label className="cursor-pointer flex flex-col  items-center justify-center w-44 h-44 bg-gray-100 rounded-lg shadow-md border border-dashed border-gray-400 hover:bg-gray-200">
         <input
           type="file"
           accept="image/*"
@@ -154,6 +170,8 @@ export default function LaporkanSampah() {
             src={preview}
             alt="Preview"
             className="w-full h-full object-cover rounded-lg"
+            width={144}
+            height={144}
           />
         ) : (
           <Camera className="w-10 h-10 text-gray-500" />
@@ -162,7 +180,7 @@ export default function LaporkanSampah() {
       <button
         onClick={() => verifyImageMutation.mutate()}
         disabled={verifyImageMutation.isPending || !image}
-        className="p-2 bg-yellow-500 text-white rounded flex items-center gap-2 disabled:opacity-50"
+        className="p-2 bg-yellow-500 text-white rounded flex items-center gap-2 disabled:opacity-50 w-full max-w-md"
       >
         {verifyImageMutation.isPending ? (
           <Loader2 className="animate-spin" />
@@ -192,14 +210,14 @@ export default function LaporkanSampah() {
           <UploadCloud className="w-5 h-5" /> Gunakan Lokasi Saya
         </button>
         <button
-          onClick={() => setUseMap(true)}
+          onClick={() => setUseMap(!useMap)}
           className="p-2 bg-green-500 text-white rounded"
         >
           Pilih di Peta 🗺️
         </button>
       </div>
       {useMap && (
-        <div className="h-96 w-full">
+        <div className="h-96 w-[90%] ">
           <DynamicMap location={location} setLocation={setLocation} />
         </div>
       )}

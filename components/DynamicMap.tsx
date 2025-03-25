@@ -3,7 +3,7 @@
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { Location } from "../app/laporkan-sampah/types";
+import { Location } from "../app/(main)/laporkan-sampah/types";
 
 // 🔥 Custom Icon untuk Marker
 const customIcon = new L.Icon({
@@ -13,13 +13,12 @@ const customIcon = new L.Icon({
   popupAnchor: [0, -35], // Posisi popup relatif ke ikon
 });
 
-export default function DynamicMap({
-  location,
-  setLocation,
-}: {
+type Props = {
   location: Location | null;
   setLocation: (loc: Location) => void;
-}) {
+};
+
+export default function DynamicMap({ location, setLocation }: Props) {
   const MapClickHandler = () => {
     useMapEvents({
       click(e) {
@@ -29,9 +28,11 @@ export default function DynamicMap({
     return null;
   };
 
+  console.log(location);
+
   return (
     <MapContainer
-      center={location || { lat: -6.1754, lng: 106.8272 }}
+      center={location || { lat: 1.1221873058442657, lng: 104.0531944079747 }}
       zoom={13}
       className="h-full w-full z-0"
     >

@@ -3,6 +3,7 @@ import "./globals.css";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import type { Metadata, Viewport } from "next";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -71,10 +72,11 @@ export default function RootLayout({
       >
         <SidebarProvider>
           <AppSidebar />
-          <div className="flex-1">
+          <main className="flex-1">
             <SidebarTrigger size={"lg"} className="h-10 w-10" />
             {children}
-          </div>
+          </main>
+          <Toaster richColors />
         </SidebarProvider>
       </body>
     </html>
