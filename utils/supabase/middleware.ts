@@ -44,6 +44,7 @@ export async function updateSession(request: NextRequest) {
     !request.nextUrl.pathname.startsWith("/login") &&
     !request.nextUrl.pathname.startsWith("/auth") &&
     request.nextUrl.pathname !== "/" &&
+    request.nextUrl.pathname !== "/manifest.json" &&
     request.nextUrl.pathname !== "/signup" &&
     request.nextUrl.pathname !== "/auth/callback" &&
     request.nextUrl.pathname !== "/auth/confirm" &&
