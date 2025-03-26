@@ -24,7 +24,7 @@ export function SidebarWrapper({
         return;
 
       const userAgent = navigator.userAgent;
-      navigator;
+
       const isMobileDevice = /Android|iPhone|iPad|iPod|Windows Phone/i.test(
         userAgent
       );
