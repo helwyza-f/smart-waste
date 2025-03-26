@@ -14,26 +14,46 @@ export function SidebarWrapper({
   children: React.ReactNode;
 }) {
   const [isOpen, setIsOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   const pathname = usePathname();
 
-  // ✅ Fungsi untuk cek apakah layar mobile (misal: max 1024px)
-  const isMobile = () =>
-    typeof window !== "undefined" && window.innerWidth <= 800;
-
+  // ✅ Deteksi apakah device adalah mobile
   useEffect(() => {
-    if (isMobile()) {
+    const checkMobile = () => {
+      if (typeof window === "undefined" || typeof navigator === "undefined")
+        return;
+
+      const userAgent = navigator.userAgent;
+      navigator;
+      const isMobileDevice = /Android|iPhone|iPad|iPod|Windows Phone/i.test(
+        userAgent
+      );
+      const isSmallScreen = window.innerWidth <= 1024;
+
+      setIsMobile(isMobileDevice || isSmallScreen);
+    };
+
+    // Gunakan timeout untuk menghindari masalah saat initial render
+    setTimeout(checkMobile, 0);
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // ✅ Tutup sidebar saat navigasi berubah (hanya jika di mobile)
+  useEffect(() => {
+    if (isMobile) {
       setIsOpen(false);
     }
-  }, [pathname]);
+  }, [pathname, isMobile]);
 
   return (
     <SidebarProvider open={isOpen} onOpenChange={setIsOpen}>
       <AppSidebar user={user} />
       <main className="flex-1">
         <SidebarTrigger className="h-12 w-12 text-foreground rounded-md hover:bg-accent hover:text-accent-foreground">
-          <Menu className="w-10 h-10" /> {/* Ikon dari Lucide */}
+          <Menu className="w-10 h-10" />
         </SidebarTrigger>
-
         {children}
       </main>
     </SidebarProvider>
